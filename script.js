@@ -1,90 +1,134 @@
+import Kalkulator from "./kalkulator.js";
+// debugger;
+const Obj1 = new Kalkulator();
 let przyciski = document.getElementsByClassName("przyc");
 let ekran = document.getElementById("ekran");
 let lista = document.getElementById("lista");
-let wynik = document.querySelectorAll("li");
+let wynik = document.querySelectorAll("p");
 let box = document.querySelector("input");
-
+const tab1 = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "+",
+  "-",
+  "*",
+  "/",
+  ":",
+  ".",
+  "Enter",
+  "=",
+  "Backspace",
+];
+let tab2 = ["-", "*", "/", ":", "+"];
 function boxLenght() {
-  return box.value.length;
+  return wynik[1].textContent.length;
+}
+//SPRAWDZ CIAG
+function sprawdzCiag(ciag) {
+  let wynik = 0;
+  let str = ciag.split("");
+  for (let item of tab2) {
+    if (str.at(-1) === item) {
+      return (wynik = item);
+    }
+  }
+  return wynik;
+}
+function sprawdzCiag2(ciag) {
+  let wynik = 0;
+  const reg2 = /[1-9]/g;
+  const temp = ciag.match(reg2);
+  return temp !== null ? (wynik = 1) : wynik;
 }
 function drukEkran(element) {
-  wynik[3].textContent = `${wynik[3].textContent}${element.textContent}`;
+  // wynik[2].textContent = `${wynik[2].textContent}${element.textContent}`;
+  wynik[1].textContent = `${wynik[1].textContent}${element.textContent}`;
 }
-
-class Kalkulator {
-  constructor(ciag = "", dane = []) {
-    this.ciag = ciag;
-    this.dane = dane;
-  }
-  drukuj() {
-    console.log(ciag);
-  }
-  dodaj(str) {
-    // this.ciag = this.ciag.map((el) => str);
-    this.ciag = str;
-    // console.log(this.ciag);
-  }
-  licz() {
-    let wynik = 0;
-    const reg1 = /[\+\-\:\*\/]/;
-    const reg2 = /^\d+$/;
-    let temp = [];
-    let int = [];
-    this.ciag.match(reg1) === null
-      ? (temp = this.ciag.match(reg2))
-      : (temp = this.ciag.match(reg1));
-    const str = this.ciag.replace(temp, ",").split(",");
-    function stringNaInt() {
-      int = str.map((el) => parseInt(el));
-    }
-    console.log();
-    // console.log(temp);
-    if (temp === null) {
-      wynik = "Wykurwiaj z tymi literkami";
-    } else if (temp[0] === "+") {
-      stringNaInt();
-      //   console.log("dodaje?");
-      wynik = int[0] + int[1];
-    } else if (temp[0] === "-") {
-      stringNaInt();
-      wynik = int[0] - int[1];
-    } else if (temp[0] === "*") {
-      stringNaInt();
-      wynik = int[0] * int[1];
-    } else if (temp[0] === "/" || temp[0] === ":") {
-      stringNaInt();
-      wynik = int[0] / int[1];
-      wynik = Math.round((wynik + Number.EPSILON) * 100) / 100;
-      wynik === Infinity ? (wynik = "Nie mozesz dzielic przez 0") : wynik;
-    }
-    // console.log(typeof wynik);
-    if (typeof wynik === "number") {
-      this.dane.push(wynik);
-    }
-    return wynik;
-  }
-}
-const Obj1 = new Kalkulator();
 for (let i = 0; i < przyciski.length; i++) {
   przyciski[i].addEventListener("click", function () {
-    return drukEkran(przyciski[i]);
+    if (przyciski[i] === przyciski[15]) {
+      Obj1.dodaj(wynik[1].textContent);
+      wynik[1].textContent = "";
+      wynik[0].textContent = Obj1.licz();
+    } else {
+      return drukEkran(przyciski[i]);
+    }
   });
 }
-// function createObj(event) {
-//   const Obj1 = new Kalkulator(tab.push(event));
-//   return Obj1;
-// }
-// debugger;
+
+//WYNIK PO ENTERZE
 function addlistAfterKey(event) {
-  if (boxLenght() > 0 && event.code === "Enter") {
-    Obj1.dodaj(box.value);
-    box.value = "";
-    wynik[2].textContent = Obj1.licz();
+  if (boxLenght() > 0 && event.key === "Enter") {
+    Obj1.dodaj(wynik[1].textContent);
+    wynik[1].textContent = "";
+    wynik[0].textContent = Obj1.licz();
   }
 }
-box.addEventListener("keypress", addlistAfterKey);
-// for (let i = 0; i < przyciski.length; i++) {
-//   przyciski[i].addEventListener("click", function () {
-//     wynik[1].textContent += przyciski[i].textContent;
-//   });
-// }
+function addNumAfterKey(event) {
+  let znak = tab1.filter((element) => event.key === element);
+  // debugger;
+  // if (wynik[2].textContent !== "") {
+  //   if (sprawdzCiag(wynik[2].textContent) !== 0) {
+
+  //   }
+  // }
+  if (znak[0] !== undefined) {
+    if (Number.isInteger(parseInt(znak[0])) || znak[0] === ".") {
+      wynik[1].textContent += znak[0];
+    } else if (
+      znak[0] === "+" ||
+      znak[0] === "-" ||
+      znak[0] === "/" ||
+      znak[0] === "*" ||
+      znak[0] === ":"
+    ) {
+      // debugger;
+      //==zaimplementowac co w przypadku gdy ktos bedzie chcial wykonywc ta sama operacje ciagle
+      Obj1.dodaj(wynik[1].textContent);
+      console.log(Obj1.ciag);
+      if (sprawdzCiag2(wynik[1].textContent) === 1) {
+        if (sprawdzCiag(wynik[0].textContent) !== 0) {
+          Obj1.dodaj(wynik[0].textContent + wynik[1].textContent);
+          wynik[0].textContent = Obj1.licz() + znak[0];
+          wynik[1].textContent = "";
+        } else {
+          wynik[1].textContent += znak[0];
+          wynik[0].textContent = wynik[1].textContent;
+          wynik[1].textContent = " ";
+        }
+      }
+      if (sprawdzCiag2(wynik[0].textContent) === 1) {
+        console.log("tu jestem");
+        if (sprawdzCiag(wynik[0].textContent) === 0) {
+          console.log("teraz tu");
+          wynik[0].textContent += znak[0];
+        }
+      }
+    } else if (znak[0] === "Enter" || znak[0] === "=") {
+      if (sprawdzCiag(wynik[0].textContent) !== 0) {
+        Obj1.dodaj(wynik[0].textContent + wynik[1].textContent);
+        wynik[0].textContent = Obj1.licz();
+        wynik[1].textContent = " ";
+      }
+    } else if (znak[0] === "Backspace") {
+      wynik[1].textContent = wynik[1].textContent.slice(0, -1);
+    }
+  }
+  console.log(Obj1.dane);
+}
+//TO DO:
+//ZNAKI MUSZA MIESCIC SIE WEWNATRZ EKRANU
+//NAPRAWIC KLAWIATURE
+//DODAJ PAMIEC KALKULATORA!!
+
+// document.addEventListener("keypress", addlistAfterKey);
+// box.addEventListener("keypress", addlistAfterKey);
+document.addEventListener("keydown", addNumAfterKey);
