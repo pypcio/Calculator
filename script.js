@@ -44,7 +44,7 @@ function sprawdzCiag(ciag) {
   return wynik;
 }
 function maxLengthHTML(obiekt) {
-  if (obiekt.textContent.length <= 21) {
+  if (obiekt.textContent.length <= 15) {
     return 1;
   } else {
     return 0;
@@ -56,12 +56,20 @@ function sprawdzCiag2(ciag) {
   const temp = ciag.match(reg2);
   return temp !== null ? (wynik = 1) : wynik;
 }
-
+function backspaceButton() {
+  {
+    if (wynik[1].textContent !== "0") {
+      wynik[1].textContent = wynik[1].textContent.slice(0, -1);
+    }
+    if (wynik[1].textContent == "" || wynik[1].textContent == " ") {
+      wynik[1].textContent = "0";
+    }
+  }
+}
 function drukEkran(element) {
   // wynik[2].textContent = `${wynik[2].textContent}${element.textContent}`;
   wynik[1].textContent = `${wynik[1].textContent}${element.textContent}`;
 }
-//KLAWIATURA NA KOMPIE
 //WYNIK PO ENTERZE
 //KLAWIATURA NA KOMPIE
 function addNumAfterKey(event) {
@@ -88,15 +96,10 @@ function addNumAfterClick(event) {
     wynik[1].textContent = "0";
   }
   if (event.target === przycSpecjalne[2]) {
-    if (wynik[1].textContent !== "0") {
-      wynik[1].textContent = wynik[1].textContent.slice(0, -1);
-    }
-    if (wynik[1].textContent == "" || wynik[1].textContent == " ") {
-      wynik[1].textContent = "0";
-    }
+    backspaceButton();
   }
 }
-
+//wypisywanie na ekran liczby (wynik[0]) oraz operacja z wynikiem (wynik[1]). Operacje na obiekcie typu Kalkulator Obj1.
 function logika(znak) {
   let stan = 0;
   if (znak[0] !== undefined) {
@@ -116,7 +119,6 @@ function logika(znak) {
       znak[0] === "*" ||
       znak[0] === ":"
     ) {
-      // debugger;
       Obj1.dodaj(wynik[1].textContent);
       if (sprawdzCiag2(wynik[1].textContent) === 1) {
         if (sprawdzCiag(wynik[0].textContent) !== 0) {
@@ -141,17 +143,12 @@ function logika(znak) {
         wynik[1].textContent = "0";
       }
     } else if (znak[0] === "Backspace") {
-      if (wynik[1].textContent !== "0") {
-        wynik[1].textContent = wynik[1].textContent.slice(0, -1);
-      }
-      if (wynik[1].textContent == "" || wynik[1].textContent == " ") {
-        wynik[1].textContent = "0";
-      }
+      backspaceButton();
     }
   }
   return stan;
 }
 //TO DO:
-//ZNAKI MUSZA MIESCIC SIE WEWNATRZ EKRANU
-//NAPRAWIC KLAWIATURE
-//DODAJ PAMIEC KALKULATORA!!
+//ZNAKI MUSZA MIESCIC SIE WEWNATRZ EKRANU --done
+//NAPRAWIC KLAWIATURE --done
+//DODAJ PAMIEC KALKULATORA!! --to do
