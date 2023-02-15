@@ -6,6 +6,7 @@ let ekran = document.getElementById("ekran");
 let lista = document.getElementById("lista");
 let wynik = document.querySelectorAll("p");
 let box = document.querySelector("input");
+let przycSpecjalne = document.getElementsByClassName("spec");
 const tab1 = [
   "0",
   "1",
@@ -42,46 +43,71 @@ function sprawdzCiag(ciag) {
   }
   return wynik;
 }
+function maxLengthHTML(obiekt) {
+  if (obiekt.textContent.length <= 21) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
 function sprawdzCiag2(ciag) {
   let wynik = 0;
   const reg2 = /[1-9]/g;
   const temp = ciag.match(reg2);
   return temp !== null ? (wynik = 1) : wynik;
 }
+
 function drukEkran(element) {
   // wynik[2].textContent = `${wynik[2].textContent}${element.textContent}`;
   wynik[1].textContent = `${wynik[1].textContent}${element.textContent}`;
 }
-for (let i = 0; i < przyciski.length; i++) {
-  przyciski[i].addEventListener("click", function () {
-    if (przyciski[i] === przyciski[15]) {
-      Obj1.dodaj(wynik[1].textContent);
-      wynik[1].textContent = "";
-      wynik[0].textContent = Obj1.licz();
-    } else {
-      return drukEkran(przyciski[i]);
-    }
-  });
-}
-
+//KLAWIATURA NA KOMPIE
 //WYNIK PO ENTERZE
-function addlistAfterKey(event) {
-  if (boxLenght() > 0 && event.key === "Enter") {
-    Obj1.dodaj(wynik[1].textContent);
-    wynik[1].textContent = "";
-    wynik[0].textContent = Obj1.licz();
+//KLAWIATURA NA KOMPIE
+function addNumAfterKey(event) {
+  // console.log(event.key);
+  let znak = tab1.filter((element) => event.key === element);
+  logika(znak);
+}
+document.addEventListener("keydown", addNumAfterKey);
+for (let i = 0; i < przyciski.length; i++) {
+  przyciski[i].addEventListener("click", addNumAfterClick);
+}
+//KLAWIATURA NA KALKULATORZE
+function addNumAfterClick(event) {
+  let znak = tab1.filter((element) => event.target.textContent === element);
+  logika(znak);
+  if (event.target === przycSpecjalne[0]) {
+    if (wynik[1] !== "" || wynik[1] !== " ") {
+      wynik[1].textContent = "0";
+    }
+  }
+  if (event.target === przycSpecjalne[1]) {
+    Obj1.ciag = "";
+    wynik[0].textContent = "";
+    wynik[1].textContent = "0";
+  }
+  if (event.target === przycSpecjalne[2]) {
+    if (wynik[1].textContent !== "0") {
+      wynik[1].textContent = wynik[1].textContent.slice(0, -1);
+    }
+    if (wynik[1].textContent == "" || wynik[1].textContent == " ") {
+      wynik[1].textContent = "0";
+    }
   }
 }
-function addNumAfterKey(event) {
-  let znak = tab1.filter((element) => event.key === element);
-  // debugger;
-  // if (wynik[2].textContent !== "") {
-  //   if (sprawdzCiag(wynik[2].textContent) !== 0) {
 
-  //   }
-  // }
+function logika(znak) {
+  let stan = 0;
   if (znak[0] !== undefined) {
-    if (Number.isInteger(parseInt(znak[0])) || znak[0] === ".") {
+    stan = 1;
+    if (
+      (Number.isInteger(parseInt(znak[0])) || znak[0] === ".") &&
+      maxLengthHTML(wynik[1]) === 1
+    ) {
+      if (wynik[1].textContent === "0") {
+        wynik[1].textContent = "";
+      }
       wynik[1].textContent += znak[0];
     } else if (
       znak[0] === "+" ||
@@ -91,24 +117,20 @@ function addNumAfterKey(event) {
       znak[0] === ":"
     ) {
       // debugger;
-      //==zaimplementowac co w przypadku gdy ktos bedzie chcial wykonywc ta sama operacje ciagle
       Obj1.dodaj(wynik[1].textContent);
-      console.log(Obj1.ciag);
       if (sprawdzCiag2(wynik[1].textContent) === 1) {
         if (sprawdzCiag(wynik[0].textContent) !== 0) {
           Obj1.dodaj(wynik[0].textContent + wynik[1].textContent);
           wynik[0].textContent = Obj1.licz() + znak[0];
-          wynik[1].textContent = "";
+          wynik[1].textContent = "0";
         } else {
           wynik[1].textContent += znak[0];
           wynik[0].textContent = wynik[1].textContent;
-          wynik[1].textContent = " ";
+          wynik[1].textContent = "0";
         }
       }
       if (sprawdzCiag2(wynik[0].textContent) === 1) {
-        console.log("tu jestem");
         if (sprawdzCiag(wynik[0].textContent) === 0) {
-          console.log("teraz tu");
           wynik[0].textContent += znak[0];
         }
       }
@@ -116,19 +138,20 @@ function addNumAfterKey(event) {
       if (sprawdzCiag(wynik[0].textContent) !== 0) {
         Obj1.dodaj(wynik[0].textContent + wynik[1].textContent);
         wynik[0].textContent = Obj1.licz();
-        wynik[1].textContent = " ";
+        wynik[1].textContent = "0";
       }
     } else if (znak[0] === "Backspace") {
-      wynik[1].textContent = wynik[1].textContent.slice(0, -1);
+      if (wynik[1].textContent !== "0") {
+        wynik[1].textContent = wynik[1].textContent.slice(0, -1);
+      }
+      if (wynik[1].textContent == "" || wynik[1].textContent == " ") {
+        wynik[1].textContent = "0";
+      }
     }
   }
-  console.log(Obj1.dane);
+  return stan;
 }
 //TO DO:
 //ZNAKI MUSZA MIESCIC SIE WEWNATRZ EKRANU
 //NAPRAWIC KLAWIATURE
 //DODAJ PAMIEC KALKULATORA!!
-
-// document.addEventListener("keypress", addlistAfterKey);
-// box.addEventListener("keypress", addlistAfterKey);
-document.addEventListener("keydown", addNumAfterKey);
